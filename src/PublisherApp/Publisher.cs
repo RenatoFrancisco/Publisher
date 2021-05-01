@@ -16,6 +16,12 @@ namespace PublisherApp
         public void Publish() 
         {
             var sourceFolder = _options.SourceFolder;
+            if (!Directory.Exists(sourceFolder)) 
+            {
+                Logger.LogError($"Source folder {sourceFolder} does not found!");
+                return;
+            }
+
             var destFolders = _options.DestFolders;
             var filesFromSourceFolder = Directory.GetFiles(sourceFolder);
             var totalFiles = filesFromSourceFolder.Length;
@@ -38,6 +44,7 @@ namespace PublisherApp
                         }
                         else 
                         {
+                            // Create a bakckup before deleting
                             Logger.LogInfo($"Deleting files from folder: {destFolder}");
                             Directory.Delete(destFolder, true);
                             Directory.CreateDirectory(destFolder);
