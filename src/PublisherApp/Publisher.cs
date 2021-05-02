@@ -37,33 +37,32 @@ namespace PublisherApp
                 .ForEach(destFolder =>
                 {
                     Logger.LogInfo($"Folders: {++counterFolders} of {totalDestFolders}");
-                    Logger.LogInfo($"Folder: {destFolder}");
-
-                    if (!Directory.Exists(destFolder))
-                    {
-                        Logger.LogInfo($"Creating folder: {destFolder}");
-                        Directory.CreateDirectory(destFolder);
-                    }
-                    else
-                    {
-                        CreateBackup(destFolder);
-                        DeleteFiles(destFolder);
-                    }
-
+                    PrepareDestFolder(destFolder);
+                    
                     var counterFiles = 0;
                     filesFromSourceFolder
                         .ToList()
                         .ForEach(sourceFile =>
                         {
                             Logger.LogInfo($"Files: {++counterFiles} of {totalFiles}");
-                            var fileName = Path.GetFileName(sourceFile);
-                            Logger.LogInfo($"=> Copying file: {fileName}");
-                            var destFileName = Path.Combine(destFolder, fileName);
-                            Logger.LogInfo($"=> Copying {fileName} from {sourceFile} to {destFileName}");
-                            File.Copy(sourceFile, destFileName, true);
-                            Logger.LogInfo("Done!");
+                            CopyFiles(sourceFile, destFolder);
                         });
                 });
+        }
+
+        private void PrepareDestFolder(string destFolder)
+        {
+            Logger.LogInfo($"Folder: {destFolder}");
+            if (!Directory.Exists(destFolder))
+            {
+                Logger.LogInfo($"Creating folder: {destFolder}");
+                Directory.CreateDirectory(destFolder);
+            }
+            else
+            {
+                CreateBackup(destFolder);
+                DeleteFiles(destFolder);
+            }
         }
 
         private void CreateBackup(string folderToCompress)
@@ -85,6 +84,16 @@ namespace PublisherApp
             Logger.LogInfo($"Deleting files from folder: {destFolder}");
             Directory.Delete(destFolder, true);
             Directory.CreateDirectory(destFolder);
+        }
+
+        private void CopyFiles(string sourceFile, string destFolder)
+        {
+            var fileName = Path.GetFileName(sourceFile);
+            Logger.LogInfo($"=> Copying file: {fileName}");
+            var destFileName = Path.Combine(destFolder, fileName);
+            Logger.LogInfo($"=> Copying {fileName} from {sourceFile} to {destFileName}");
+            File.Copy(sourceFile, destFileName, true);
+            Logger.LogInfo("Done!");
         }
     }
 }
