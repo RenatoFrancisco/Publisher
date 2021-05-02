@@ -38,7 +38,7 @@ namespace PublisherApp
                 {
                     Logger.LogInfo($"Folders: {++counterFolders} of {totalDestFolders}");
                     PrepareDestFolder(destFolder);
-                    
+
                     var counterFiles = 0;
                     filesFromSourceFolder
                         .ToList()
@@ -93,7 +93,7 @@ namespace PublisherApp
             var destFileName = Path.Combine(destFolder, fileName);
             Logger.LogInfo($"=> Copying {fileName} from {sourceFile} to {destFileName}");
             File.Copy(sourceFile, destFileName, true);
-            Logger.LogInfo("Done!");
+            Logger.LogSuccess("Done!");
         }
     }
 }

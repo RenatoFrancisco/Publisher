@@ -25,7 +25,7 @@ namespace PublisherApp
 
             serviceProvider.GetService<Publisher>().Publish();
 
-            Logger.LogInfo($"Finish at: {DateTime.Now}");
+            Logger.LogSuccess($"Finish at: {DateTime.Now}");
             watch.Stop();
             Logger.LogInfo($" === Time elapsed (ms): {watch.ElapsedMilliseconds} ===");
             Console.ReadLine();
