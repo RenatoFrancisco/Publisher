@@ -33,6 +33,7 @@ namespace PublisherApp
         }
 
         static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args);
+        
         private static void ConfigureServices(IServiceCollection services)
         {
             _configuration = new ConfigurationBuilder()
