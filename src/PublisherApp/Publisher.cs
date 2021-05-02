@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Options;
+using System.IO.Compression;
 
 namespace PublisherApp
 {
@@ -13,10 +14,10 @@ namespace PublisherApp
             _options = options.Value;
         }
 
-        public void Publish() 
+        public void Publish()
         {
             var sourceFolder = _options.SourceFolder;
-            if (!Directory.Exists(sourceFolder)) 
+            if (!Directory.Exists(sourceFolder))
             {
                 Logger.LogError($"Source folder {sourceFolder} does not found!");
                 return;
@@ -33,27 +34,31 @@ namespace PublisherApp
             var counterFolders = 0;
             destFolders
                 .ToList()
-                .ForEach(destFolder => {
+                .ForEach(destFolder =>
+                {
                     Logger.LogInfo($"Folders: {++counterFolders} of {totalDestFolders}");
-                    Logger.LogInfo($"Copying to folder: {destFolder}");
+                    Logger.LogInfo($"Folder: {destFolder}");
 
-                        if (!Directory.Exists(destFolder)) 
-                        {
-                            Logger.LogInfo($"Creating folder: {destFolder}");
-                            Directory.CreateDirectory(destFolder);
-                        }
-                        else 
-                        {
-                            // Create a bakckup before deleting
-                            Logger.LogInfo($"Deleting files from folder: {destFolder}");
-                            Directory.Delete(destFolder, true);
-                            Directory.CreateDirectory(destFolder);
-                        }
+                    if (!Directory.Exists(destFolder))
+                    {
+                        Logger.LogInfo($"Creating folder: {destFolder}");
+                        Directory.CreateDirectory(destFolder);
+                    }
+                    else
+                    {
+                        Logger.LogInfo($"Creating backup of folder: {destFolder}");
+                        CreateBackup(destFolder);
+
+                        Logger.LogInfo($"Deleting files from folder: {destFolder}");
+                        Directory.Delete(destFolder, true);
+                        Directory.CreateDirectory(destFolder);
+                    }
 
                     var counterFiles = 0;
                     filesFromSourceFolder
                         .ToList()
-                        .ForEach(sourceFile => {
+                        .ForEach(sourceFile =>
+                        {
                             Logger.LogInfo($"Files: {++counterFiles} of {totalFiles}");
                             var fileName = Path.GetFileName(sourceFile);
                             Logger.LogInfo($"=> Copying file: {fileName}");
@@ -63,6 +68,16 @@ namespace PublisherApp
                             Logger.LogInfo("Done!");
                         });
                 });
+        }
+
+        private void CreateBackup(string folderToCompress)
+        {
+            var outFolder = Path.GetFullPath(Path.Combine(folderToCompress, @"..\"));
+            var lastFolder = folderToCompress.Split(Path.DirectorySeparatorChar).Last();
+            var outFileZip = Path.Combine(outFolder, $"{lastFolder}_Backup.zip");
+
+            File.Delete(outFileZip);
+            ZipFile.CreateFromDirectory(folderToCompress, outFileZip);
         }
     }
 }
