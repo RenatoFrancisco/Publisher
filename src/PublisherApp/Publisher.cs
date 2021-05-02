@@ -81,7 +81,7 @@ namespace PublisherApp
             var deleteFiles = _options.DeleteFiles;
             if (!deleteFiles) return;
 
-            Logger.LogInfo($"Deleting files from folder: {destFolder}");
+            Logger.LogWarn($"Deleting files from folder: {destFolder}");
             Directory.Delete(destFolder, true);
             Directory.CreateDirectory(destFolder);
         }
