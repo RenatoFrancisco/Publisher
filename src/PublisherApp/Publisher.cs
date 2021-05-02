@@ -46,12 +46,8 @@ namespace PublisherApp
                     }
                     else
                     {
-                        Logger.LogInfo($"Creating backup of folder: {destFolder}");
                         CreateBackup(destFolder);
-
-                        Logger.LogInfo($"Deleting files from folder: {destFolder}");
-                        Directory.Delete(destFolder, true);
-                        Directory.CreateDirectory(destFolder);
+                        DeleteFiles(destFolder);
                     }
 
                     var counterFiles = 0;
@@ -76,8 +72,19 @@ namespace PublisherApp
             var lastFolder = folderToCompress.Split(Path.DirectorySeparatorChar).Last();
             var outFileZip = Path.Combine(outFolder, $"{lastFolder}_Backup.zip");
 
+            Logger.LogInfo($"Creating backup of folder: {folderToCompress}");
             File.Delete(outFileZip);
             ZipFile.CreateFromDirectory(folderToCompress, outFileZip);
+        }
+
+        private void DeleteFiles(string destFolder)
+        {
+            var deleteFiles = _options.DeleteFiles;
+            if (!deleteFiles) return;
+
+            Logger.LogInfo($"Deleting files from folder: {destFolder}");
+            Directory.Delete(destFolder, true);
+            Directory.CreateDirectory(destFolder);
         }
     }
 }
