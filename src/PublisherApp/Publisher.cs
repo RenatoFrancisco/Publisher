@@ -38,16 +38,10 @@ namespace PublisherApp
                 {
                     Logger.LogInfo($"Folders: {++counterFolders} of {totalDestFolders}");
                     PrepareDestFolder(destFolder);
-                    
-                    var counterFiles = 0;
-                    filesFromSourceFolder
-                        .ToList()
-                        .ForEach(sourceFile =>
-                        {
-                            Logger.LogInfo($"Files: {++counterFiles} of {totalFiles}");
-                            CopyFiles(sourceFile, destFolder);
-                        });
+                    CopyFiles(sourceFolder, destFolder, _options.CopySubfolders);
                 });
+
+            Logger.LogInfo("Done!");
         }
 
         private void PrepareDestFolder(string destFolder)
@@ -86,14 +80,32 @@ namespace PublisherApp
             Directory.CreateDirectory(destFolder);
         }
 
-        private void CopyFiles(string sourceFile, string destFolder)
+        private void CopyFiles(string sourceFolder, string destFolder, bool copySubfolders)
         {
-            var fileName = Path.GetFileName(sourceFile);
-            Logger.LogInfo($"=> Copying file: {fileName}");
-            var destFileName = Path.Combine(destFolder, fileName);
-            Logger.LogInfo($"=> Copying {fileName} from {sourceFile} to {destFileName}");
-            File.Copy(sourceFile, destFileName, true);
-            Logger.LogInfo("Done!");
+            var dir = new DirectoryInfo(sourceFolder);
+            var subfolders = dir.GetDirectories();
+            Logger.LogInfo($"=> Total of sub folders: {subfolders.Count()}");
+
+            Directory.CreateDirectory(destFolder);
+            
+            var files = dir.GetFiles();
+            Logger.LogInfo($"==> Total of files: {files.Count()}");
+            foreach (var file in files)
+            {
+                Logger.LogInfo($"===> Copying file: {file.Name} from {sourceFolder} to {destFolder}");
+                var tempPath = Path.Combine(destFolder, file.Name);
+                file.CopyTo(tempPath, true);
+            }
+            
+            if (copySubfolders)
+            {
+                foreach (var subFolder in subfolders)
+                {
+                    Logger.LogInfo($"====> Copying file(s) from subfolder {subFolder}");
+                    var tempPath = Path.Combine(destFolder, subFolder.Name);
+                    CopyFiles(subFolder.FullName, tempPath, copySubfolders);
+                }
+            }
         }
     }
 }

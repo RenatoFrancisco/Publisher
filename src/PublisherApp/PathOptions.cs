@@ -7,5 +7,6 @@ namespace PublisherApp
         public string SourceFolder { get; set; }
         public string[] DestFolders { get; set; }
         public bool DeleteFiles { get; set; }
+        public bool CopySubfolders { get; set; }
     }
 }
