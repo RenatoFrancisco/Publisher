@@ -84,28 +84,29 @@ namespace PublisherApp
         {
             var dir = new DirectoryInfo(sourceFolder);
             var subfolders = dir.GetDirectories();
-            Logger.LogInfo($"=> Total of sub folders: {subfolders.Count()}");
+            Logger.LogInfo($"=> Total of subfolders: {subfolders.Count()}");
 
             Directory.CreateDirectory(destFolder);
             
             var files = dir.GetFiles();
             Logger.LogInfo($"==> Total of files: {files.Count()}");
-            foreach (var file in files)
-            {
-                Logger.LogInfo($"===> Copying file: {file.Name} from {sourceFolder} to {destFolder}");
-                var tempPath = Path.Combine(destFolder, file.Name);
-                file.CopyTo(tempPath, true);
-            }
+            
+            files
+                .ToList()
+                .ForEach(file => {
+                    Logger.LogInfo($"===> Copying file: {file.Name} from {sourceFolder} to {destFolder}");
+                    var tempPath = Path.Combine(destFolder, file.Name);
+                    file.CopyTo(tempPath, true);
+                });
             
             if (copySubfolders)
-            {
-                foreach (var subFolder in subfolders)
-                {
-                    Logger.LogInfo($"====> Copying file(s) from subfolder {subFolder}");
-                    var tempPath = Path.Combine(destFolder, subFolder.Name);
-                    CopyFiles(subFolder.FullName, tempPath, copySubfolders);
-                }
-            }
+                subfolders
+                    .ToList()
+                    .ForEach( subfolder => {
+                        Logger.LogInfo($"====> Copying file(s) from subfolder {subfolder}");
+                        var tempPath = Path.Combine(destFolder, subfolder.Name);
+                        CopyFiles(subfolder.FullName, tempPath, copySubfolders);
+                    });
         }
     }
 }
