@@ -25,7 +25,7 @@ namespace PublisherApp
 
             serviceProvider.GetService<Publisher>().Publish();
 
-            Logger.LogInfo($"Finish at: {DateTime.Now}");
+            Logger.LogSuccess($"Finish at: {DateTime.Now}");
             watch.Stop();
             Logger.LogInfo($" === Time elapsed (ms): {watch.ElapsedMilliseconds} ===");
             Console.ReadLine();
@@ -33,6 +33,7 @@ namespace PublisherApp
         }
 
         static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args);
+
         private static void ConfigureServices(IServiceCollection services)
         {
             _configuration = new ConfigurationBuilder()
@@ -40,7 +41,6 @@ namespace PublisherApp
                 .AddJsonFile("appsettings.json", false)
                 .Build();
 
-            services.AddSingleton<IConfiguration>(_configuration);
             services.AddTransient<Publisher>();
             services.Configure<PathOptions>(_configuration.GetSection(PathOptions.Path));
         }

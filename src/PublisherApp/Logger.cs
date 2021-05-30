@@ -5,6 +5,7 @@ namespace PublisherApp
     public static class Logger
     {
         public static void LogInfo(string info) => Console.WriteLine($"info : {info}");
+
         public static void LogWarn(string warn) 
         {
             var defaultColor = Console.ForegroundColor;
@@ -18,6 +19,14 @@ namespace PublisherApp
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"error : {error}");
             Console.ForegroundColor = defaultColor;
-        } 
+        }
+
+        public static void LogSuccess(string log) 
+        {
+            var defaultColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine($"success : {log}");
+            Console.ForegroundColor = defaultColor;
+        }
     }
 }
