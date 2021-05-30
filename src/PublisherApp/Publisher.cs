@@ -84,7 +84,7 @@ namespace PublisherApp
         {
             var dir = new DirectoryInfo(sourceFolder);
             var subfolders = dir.GetDirectories();
-            Logger.LogInfo($"=> Total of sub folders: {subfolders.Count()}");
+            Logger.LogInfo($"=> Total of subfolders: {subfolders.Count()}");
 
             Directory.CreateDirectory(destFolder);
             
