@@ -102,10 +102,10 @@ namespace PublisherApp
             if (copySubfolders)
                 subfolders
                     .ToList()
-                    .ForEach( subFolder => {
-                        Logger.LogInfo($"====> Copying file(s) from subfolder {subFolder}");
-                        var tempPath = Path.Combine(destFolder, subFolder.Name);
-                        CopyFiles(subFolder.FullName, tempPath, copySubfolders);
+                    .ForEach( subfolder => {
+                        Logger.LogInfo($"====> Copying file(s) from subfolder {subfolder}");
+                        var tempPath = Path.Combine(destFolder, subfolder.Name);
+                        CopyFiles(subfolder.FullName, tempPath, copySubfolders);
                     });
         }
     }
